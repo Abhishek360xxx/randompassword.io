@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Password Generator</title>
+   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="styles.css">
+   <script src="https://kit.fontawesome.com/f30fac2c61.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+      <div class="input">
+         <input type="text" id="passwordInput"  value="" readonly>
+         <button id="copyButton" onclick="copied()">Copy</button>
+      </div>
+      <div class="option">
+         <div class="text">
+            <label for="passwordLength">Password Length:</label>
+            <input type="number" min="1" max="20" value="10" id="passwordLength"> <!-- Updated default value to 10 -->
+         </div>
+         <div class="text">
+            <input type="checkbox" id="upper">
+            <label for="upper">Include Uppercase</label>
+         </div>
+         <div class="text">
+            <input type="checkbox" id="lower">
+            <label for="lower">Include Lowercase</label>
+         </div>
+         <div class="text">
+            <input type="checkbox" id="num">
+            <label for="num">Include Numbers</label>
+         </div>
+         <div class="text">
+            <input type="checkbox" id="sym">
+            <label for="sym">Include Symbols</label>
+         </div>
+         <button onclick="myFun()">Generate Password</button>
+      </div>
+    </div>
+   <script src="index.js"></script>
+</body>
+</html>

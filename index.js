@@ -1,73 +1,99 @@
-// Password generation logic and other functions here...
-let lowerData = "abcdefghijklmnopqrstuvwxyz";
-let upperData = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-let numData = "1234567890";
-let symData = "!@#$%^&*()";
+const lowerData = "abcdefghijklmnopqrstuvwxyz";
+const upperData = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const numData = "1234567890";
+const symData = "!@#$%^&*()";
 
-let passwordInput = document.getElementById("passwordInput");
-let passwordLength = document.getElementById("passwordLength");
-let upper = document.getElementById("upper");
-let lower = document.getElementById("lower");
-let num = document.getElementById("num");
-let sym = document.getElementById("sym");
-let copyButton = document.getElementById("copyButton");
+const passwordInput = document.getElementById("passwordInput");
+const passwordLength = document.getElementById("passwordLength");
+const upper = document.getElementById("upper");
+const lower = document.getElementById("lower");
+const num = document.getElementById("num");
+const sym = document.getElementById("sym");
+const copyButton = document.getElementById("copyButton");
 
-function generateNumber(data){
-   return data[Math.floor(Math.random() * data.length)];
+// Generate a random character from a given string
+function generateCharacter(data) {
+    return data[Math.floor(Math.random() * data.length)];
 }
 
-function generate(password=""){
-   if(upper.checked){
-      password += generateNumber(upperData)
-   }
-   if(lower.checked){
-       password += generateNumber(lowerData)
-    }
-    if(num.checked){
-       password += generateNumber(numData)
-    }
-    if(sym.checked){
-       password += generateNumber(symData)
-    }
-    if(password.length < passwordLength.value){
-      return generate(password)
-    }
-    
-    console.log(password);
-    passwordInput.value = password;
-    copyButton.disabled = false; // Enable copy button when password is generated
- }
+// Main password generation function
+function generate() {
+    const availableSets = [];
+    if (upper.checked) availableSets.push(upperData);
+    if (lower.checked) availableSets.push(lowerData);
+    if (num.checked) availableSets.push(numData);
+    if (sym.checked) availableSets.push(symData);
 
- function myFun(){
-   copyButton.disabled = true; // Disable copy button until password is generated
-   generate();
+    if (availableSets.length === 0) {
+        alert("Please select at least one character set.");
+        return;
+    }
+
+    let password = "";
+
+    // Ensure the password includes at least one character from each selected set
+    availableSets.forEach(set => {
+        password += generateCharacter(set);
+    });
+
+    // Fill the rest of the password length with random characters from any set
+    while (password.length < passwordLength.value) {
+        const randomSet = generateCharacter(availableSets);
+        password += generateCharacter(randomSet);
+    }
+
+    // Truncate password to the specified length and update the input field
+    passwordInput.value = password.slice(0, passwordLength.value);
+    copyButton.disabled = false; // Enable copy button
 }
 
-function copied(){
-   navigator.clipboard.writeText(passwordInput.value)
-   .then(() => {
-      alert("Password copied to clipboard");
-   })
-   .catch((error) => {
-      console.error("Error copying to clipboard: ", error);
-      alert("Error copying to clipboard");
-   });
+function myFun() {
+    copyButton.disabled = true; // Disable copy until a password is generated
+    if (validatePasswordLength()) {
+        generate();
+    }
 }
 
-// Function to fetch a random image from Unsplash
+// Validate password length
+function validatePasswordLength() {
+    const length = parseInt(passwordLength.value, 10);
+    if (isNaN(length) || length < 1 || length > 20) {
+        alert("Password length must be between 1 and 20.");
+        return false;
+    }
+    return true;
+}
+
+// Copy password to clipboard
+function copied() {
+    navigator.clipboard.writeText(passwordInput.value)
+        .then(() => {
+            alert("Password copied to clipboard!");
+        })
+        .catch(error => {
+            console.error("Error copying to clipboard:", error);
+            alert("Failed to copy to clipboard.");
+        });
+}
+
+// Fetch a random image from Picsum Photos and set it as the background
 async function getRandomImage() {
     try {
-        const response = await fetch('https://source.unsplash.com/random');
+        const timestamp = new Date().getTime(); // Prevent caching
+        const response = await fetch(`https://picsum.photos/1920/1080?random=${timestamp}`);
         if (response.ok) {
             const imageUrl = response.url;
             document.body.style.backgroundImage = `url("${imageUrl}")`;
+            document.body.style.backgroundSize = "cover";
+            document.body.style.backgroundRepeat = "no-repeat";
+            document.body.style.backgroundPosition = "center";
         } else {
-            console.error('Failed to fetch random image');
+            console.error("Failed to fetch a random image.");
         }
     } catch (error) {
-        console.error('Error fetching random image:', error);
+        console.error("Error fetching random image:", error);
     }
 }
 
-// Call the function to set random background image
+// Call the function on page load
 getRandomImage();

@@ -2,20 +2,24 @@ body {
    font-family: 'Roboto', sans-serif;
    margin: 0;
    padding: 0;
-   background-size: cover; /* Cover the entire background */
+   min-height: 100vh;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   background-size: cover;
    background-repeat: no-repeat;
    background-position: center;
-   min-height: 100vh; /* Set minimum height to cover the full viewport height */
 }
 
-
 .container {
-   width: 80%;
-   margin: 50px auto;
-   background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+   width: 90%;
+   max-width: 500px; /* Limit the width for better readability */
+   background-color: rgba(255, 255, 255, 0.2); /* Transparent background */
    padding: 20px;
-   border-radius: 8px;
-   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+   border-radius: 12px;
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow */
+   backdrop-filter: blur(10px); /* Glassmorphism effect */
+   color: #fff; /* Light text color for better visibility */
 }
 
 .input {
@@ -27,14 +31,21 @@ body {
    flex: 1;
    padding: 10px;
    margin-right: 10px;
-   border: 2px solid #ddd;
+   border: 2px solid rgba(255, 255, 255, 0.5); /* Semi-transparent border */
    border-radius: 4px;
    font-size: 16px;
+   background-color: rgba(255, 255, 255, 0.1); /* Transparent background */
+   color: #fff; /* White text */
+   outline: none;
+}
+
+.input input::placeholder {
+   color: rgba(255, 255, 255, 0.7); /* Semi-transparent placeholder */
 }
 
 .input button {
    padding: 10px 20px;
-   background-color: #f50057; /* Pink color */
+   background-color: rgba(255, 0, 87, 0.8); /* Semi-transparent pink */
    color: #fff;
    border: none;
    border-radius: 4px;
@@ -43,7 +54,7 @@ body {
 }
 
 .input button:hover {
-   background-color: #c51162; /* Darker pink color on hover */
+   background-color: rgba(197, 17, 98, 0.9); /* Darker pink on hover */
 }
 
 .option {
@@ -52,15 +63,18 @@ body {
 
 .text {
    margin-bottom: 10px;
-   color: #333; /* Dark gray color for labels */
 }
 
 .text input[type="checkbox"] {
    margin-right: 10px;
 }
 
+.text label {
+   color: #fff; /* Light text for visibility */
+}
+
 button[disabled] {
    cursor: not-allowed;
-   background-color: #ccc;
+   background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent disabled state */
    color: #666;
 }

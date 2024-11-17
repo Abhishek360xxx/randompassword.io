@@ -1,19 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Password Generator</title>
-   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-   <link rel="stylesheet" href="styles.css">
-   <script src="index.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="index.js" defer></script>
 </head>
 <body>
     <div class="container">
+        <!-- Password Input and Copy Button Section -->
         <div class="input">
             <input type="text" id="passwordInput" value="" readonly aria-label="Generated Password">
-            <button id="copyButton" onclick="copied()">Copy</button>
+            <button id="copyButton" onclick="copied()" disabled>Copy</button>
         </div>
+
+        <!-- Download Button Below Password Box -->
+        <button id="downloadButton" onclick="downloadPassword()">Download</button>
+
+        <!-- Password Strength Meter -->
+        <div class="strength">
+            <div class="strength-bar" id="strengthBar"></div>
+            <span id="strengthMessage">Strength: </span>
+        </div>
+
+        <!-- Options Section -->
         <div class="option">
             <div class="text">
                 <label for="passwordLength">Password Length:</label>
@@ -34,6 +46,11 @@
             <div class="text">
                 <input type="checkbox" id="sym" checked aria-label="Include Symbols">
                 <label for="sym">Include Symbols</label>
+            </div>
+            <!-- Exclude Characters Input -->
+            <div class="text">
+                <label for="excludeChars">Exclude Characters:</label>
+                <input type="text" id="excludeChars" aria-label="Exclude characters from password">
             </div>
             <button onclick="myFun()">Generate Password</button>
         </div>

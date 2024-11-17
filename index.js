@@ -10,13 +10,36 @@ const lower = document.getElementById("lower");
 const num = document.getElementById("num");
 const sym = document.getElementById("sym");
 const copyButton = document.getElementById("copyButton");
+const excludeChars = document.getElementById("excludeChars");
+const strengthBar = document.getElementById("strengthBar");
+const strengthMessage = document.getElementById("strengthMessage");
 
-// Generate a random character from a given string
-function generateCharacter(data) {
+// Fetch random background image from Unsplash API
+async function getRandomImage() {
+    try {
+        const response = await fetch('https://picsum.photos/1920/1080?greyscale'); // Get random image
+        if (response.ok) {
+            const imageUrl = response.url;
+            document.body.style.backgroundImage = `url("${imageUrl}")`;
+            document.body.style.backgroundSize = "cover"; // Make it cover full viewport
+            document.body.style.backgroundRepeat = "no-repeat"; // No repetition of image
+            document.body.style.backgroundPosition = "center"; // Center the image
+        } else {
+            console.error('Failed to fetch random image');
+        }
+    } catch (error) {
+        console.error('Error fetching random image:', error);
+    }
+}
+
+// Call function to set background on page load
+getRandomImage();
+
+// Password generation logic
+function generateNumber(data) {
     return data[Math.floor(Math.random() * data.length)];
 }
 
-// Main password generation function
 function generate() {
     const availableSets = [];
     if (upper.checked) availableSets.push(upperData);
@@ -30,31 +53,54 @@ function generate() {
     }
 
     let password = "";
-
-    // Ensure the password includes at least one character from each selected set
-    availableSets.forEach(set => {
-        password += generateCharacter(set);
-    });
-
-    // Fill the rest of the password length with random characters from any set
     while (password.length < passwordLength.value) {
-        const randomSet = generateCharacter(availableSets);
-        password += generateCharacter(randomSet);
+        const randomSet = generateNumber(availableSets);
+        password += generateNumber(randomSet);
     }
 
-    // Truncate password to the specified length and update the input field
+    password = filterExcludedChars(password, excludeChars.value);
     passwordInput.value = password.slice(0, passwordLength.value);
-    copyButton.disabled = false; // Enable copy button
+    copyButton.disabled = false;
+    updateStrengthIndicator(password);
+}
+
+function filterExcludedChars(password, excluded) {
+    const excludeSet = new Set(excluded.split(''));
+    return [...password].filter(char => !excludeSet.has(char)).join('');
+}
+
+function updateStrengthIndicator(password) {
+    let strength = 0;
+
+    // Check password strength
+    if (/[a-z]/.test(password)) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+    const percentage = (strength / 4) * 100;
+    strengthBar.style.width = `${percentage}%`;
+    
+    // Color and message based on strength
+    if (percentage === 100) {
+        strengthBar.style.background = "green";
+        strengthMessage.textContent = "Strength: Strong";
+    } else if (percentage >= 50) {
+        strengthBar.style.background = "orange";
+        strengthMessage.textContent = "Strength: Medium";
+    } else {
+        strengthBar.style.background = "red";
+        strengthMessage.textContent = "Strength: Weak";
+    }
 }
 
 function myFun() {
-    copyButton.disabled = true; // Disable copy until a password is generated
+    copyButton.disabled = true;
     if (validatePasswordLength()) {
         generate();
     }
 }
 
-// Validate password length
 function validatePasswordLength() {
     const length = parseInt(passwordLength.value, 10);
     if (isNaN(length) || length < 1 || length > 20) {
@@ -64,36 +110,27 @@ function validatePasswordLength() {
     return true;
 }
 
-// Copy password to clipboard
 function copied() {
     navigator.clipboard.writeText(passwordInput.value)
         .then(() => {
-            alert("Password copied to clipboard!");
+            alert("Password copied to clipboard");
         })
-        .catch(error => {
+        .catch((error) => {
             console.error("Error copying to clipboard:", error);
-            alert("Failed to copy to clipboard.");
+            alert("Error copying to clipboard");
         });
 }
 
-// Fetch a random image from Picsum Photos and set it as the background
-async function getRandomImage() {
-    try {
-        const timestamp = new Date().getTime(); // Prevent caching
-        const response = await fetch(`https://picsum.photos/1920/1080?random=${timestamp}`);
-        if (response.ok) {
-            const imageUrl = response.url;
-            document.body.style.backgroundImage = `url("${imageUrl}")`;
-            document.body.style.backgroundSize = "cover";
-            document.body.style.backgroundRepeat = "no-repeat";
-            document.body.style.backgroundPosition = "center";
-        } else {
-            console.error("Failed to fetch a random image.");
-        }
-    } catch (error) {
-        console.error("Error fetching random image:", error);
+// Function to download password as a text file
+function downloadPassword() {
+    const password = passwordInput.value;
+    if (!password) {
+        alert("No password generated yet!");
+        return;
     }
+    const blob = new Blob([password], { type: "text/plain" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "password.txt";
+    link.click();
 }
-
-// Call the function on page load
-getRandomImage();
